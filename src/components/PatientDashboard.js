@@ -1,55 +1,96 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 
 const PatientDashboard = () => {
+    const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
-    const [completedAppointments, setCompletedAppointments] = useState([]);
-    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Pobranie wizyt pacjenta
-        apiClient.get('/api/appointments?role=PATIENT&status=SCHEDULED')
-            .then((response) => setAppointments(response.data))
-            .catch((error) => console.error('Error fetching appointments:', error));
+    // Function to fetch appointments
+    const fetchAppointments = async () => {
+        const token = localStorage.getItem('token'); // Ensure token exists
+        if (!token) {
+            setError('User not logged in. Please log in first.');
+            return;
+        }
 
-        // Pobranie zakończonych wizyt
-        apiClient.get('/api/appointments?role=PATIENT&status=COMPLETED')
-            .then((response) => setCompletedAppointments(response.data))
-            .catch((error) => console.error('Error fetching completed appointments:', error));
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await apiClient.get('/api/appointments/patient/appointments', {
+                headers: { Authorization: `Bearer ${token}` }, // Attach token in headers
+            });
+
+            // Debug: Log server response
+            console.log('Appointments fetched successfully:', response.data);
+
+            setAppointments(response.data); // Set fetched appointments
+        } catch (err) {
+            const errorMessage = err.response
+                ? `${err.response.status} ${err.response.statusText}: ${err.response.data}`
+                : err.message;
+
+            // Debug: Log the error message
+            console.error('Error fetching appointments:', errorMessage);
+
+            setError('Failed to fetch appointments. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch appointments initially when component mounts
+    React.useEffect(() => {
+        fetchAppointments();
     }, []);
 
-    const handleRate = async (id, rating) => {
-        try {
-            await apiClient.post(`/api/ratings/${id}`, { score: rating }); // Ocena wizyty
-            setCompletedAppointments(completedAppointments.filter((appointment) => appointment.id !== id));
-            setMessage('Appointment rated successfully!');
-        } catch (error) {
-            setMessage('Failed to rate appointment: ' + error.message);
-        }
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/'); // Redirect to the homepage
     };
 
     return (
         <div>
             <h2>Patient Dashboard</h2>
-            <h3>Upcoming Appointments</h3>
-            {appointments.map((appointment) => (
-                <div key={appointment.id}>
-                    <p>Doctor: {appointment.doctor.fullName}</p>
-                    <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-                </div>
-            ))}
+            <button onClick={() => navigate('/schedule-appointment')}>Schedule Appointment</button>
+            <button onClick={() => navigate('/rate-appointment')}>Rate Appointment</button>
+            <button onClick={() => navigate('/cancel-appointment')}>Cancel Appointment</button>
+            <button onClick={handleLogout}>Logout</button>
+            <button onClick={fetchAppointments} disabled={loading}>
+                {loading ? 'Refreshing...' : 'Refresh Appointments'}
+            </button>
 
-            <h3>Rate Completed Appointments</h3>
-            {completedAppointments.map((appointment) => (
-                <div key={appointment.id}>
-                    <p>Doctor: {appointment.doctor.fullName}</p>
-                    <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                        <button key={rating} onClick={() => handleRate(appointment.id, rating)}>{rating}</button>
+            <h3>Your Appointments</h3>
+            {loading ? (
+                <p>Loading appointments...</p>
+            ) : error ? (
+                <p>{error}</p>
+            ) : (
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {appointments.map((appointment) => (
+                        <tr key={appointment.id}>
+                            <td>{appointment.id}</td>
+                            <td>{appointment.doctorName || appointment.doctorId}</td>
+                            <td>{new Date(appointment.dateTime).toLocaleString()}</td>
+                            <td>{appointment.details}</td>
+                            <td>{appointment.status}</td>
+                        </tr>
                     ))}
-                </div>
-            ))}
-            {message && <p>{message}</p>}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };

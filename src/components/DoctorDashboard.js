@@ -1,39 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import apiClient from '../api/apiClient';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const DoctorDashboard = () => {
-    const [appointments, setAppointments] = useState([]);
-    const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        // Pobranie wizyt do potwierdzenia
-        apiClient.get('/api/appointments?role=DOCTOR&status=SCHEDULED')
-            .then((response) => setAppointments(response.data))
-            .catch((error) => console.error('Error fetching appointments:', error));
-    }, []);
+    const handleNavigateToSchedule = () => {
+        navigate('/schedule-appointment'); // Redirect to schedule appointment page
+    };
 
-    const handleComplete = async (id) => {
-        try {
-            await apiClient.patch(`/api/appointments/${id}/complete`); // Potwierdzenie wizyty
-            setAppointments(appointments.filter((appointment) => appointment.id !== id));
-            setMessage('Appointment marked as completed!');
-        } catch (error) {
-            setMessage('Failed to complete appointment: ' + error.message);
-        }
+    const handleNavigateToComplete = () => {
+        navigate('/complete-appointment'); // Redirect to complete appointment page
+    };
+
+    const handleLogout = () => {
+        navigate('/'); // Redirect to the homepage (or login screen)
     };
 
     return (
         <div>
             <h2>Doctor Dashboard</h2>
-            <h3>Pending Appointments</h3>
-            {appointments.map((appointment) => (
-                <div key={appointment.id}>
-                    <p>Patient: {appointment.patient.fullName}</p>
-                    <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-                    <button onClick={() => handleComplete(appointment.id)}>Mark as Completed</button>
-                </div>
-            ))}
-            {message && <p>{message}</p>}
+            <button onClick={handleNavigateToSchedule}>Schedule Next Appointment</button>
+            <button onClick={handleNavigateToComplete}>Complete Appointment</button>
+            <button onClick={handleLogout}>Logout</button>
         </div>
     );
 };
