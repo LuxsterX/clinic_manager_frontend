@@ -13,7 +13,7 @@ const HomePage = () => {
                 <button style={styles.button} onClick={() => navigate('/login')}>
                     Log In
                 </button>
-                <button style={styles.button} onClick={() => navigate('/register')}>
+                <button style={styles.button} onClick={() => navigate('/register-patient')}>
                     Register
                 </button>
             </div>

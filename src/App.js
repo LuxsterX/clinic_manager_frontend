@@ -20,7 +20,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPatient />} />
+                <Route path="/register-patient" element={<RegisterPatient />} />
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
                 <Route path="/patient-dashboard" element={<PatientDashboard />} />
@@ -30,7 +30,7 @@ function App() {
                 <Route path="/cancel-appointment" element={<CancelAppointment />} />
                 <Route path="/schedule-appointment-doctor" element={<ScheduleAppointmentByDoctor />} />
                 <Route path="/complete-appointment" element={<CompleteAppointment />} />
-                <Route path="/schedule-appointment" element={<ScheduleAppointmentByPatient />} />
+                <Route path="/schedule-appointment-patient" element={<ScheduleAppointmentByPatient />} />
                 <Route path="/rate-appointment" element={<RateAppointment />} />
                 <Route path="/cancel-appointment" element={<CancelAppointment />} />
             </Routes>

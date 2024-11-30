@@ -20,7 +20,9 @@ const RateAppointment = () => {
         e.preventDefault();
         try {
             // API call to rate appointment
-            await apiClient.post('/appointments/rate', formData);
+            const response = await apiClient.post(
+                `/api/ratings/rate?appointmentId=${formData.appointmentId}&score=${formData.score}&comments=${formData.comments || ''}`
+            );
             setMessage('Appointment rated successfully!');
             setFormData({ appointmentId: '', score: '', comments: '' }); // Reset form
         } catch (error) {

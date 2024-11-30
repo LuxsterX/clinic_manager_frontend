@@ -19,7 +19,7 @@ const PatientDashboard = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await apiClient.get('/api/appointments/patient/appointments', {
+            const response = await apiClient.get('/api/appointments', {
                 headers: { Authorization: `Bearer ${token}` }, // Attach token in headers
             });
 
@@ -54,7 +54,7 @@ const PatientDashboard = () => {
     return (
         <div>
             <h2>Patient Dashboard</h2>
-            <button onClick={() => navigate('/schedule-appointment')}>Schedule Appointment</button>
+            <button onClick={() => navigate('/schedule-appointment-patient')}>Schedule Appointment</button>
             <button onClick={() => navigate('/rate-appointment')}>Rate Appointment</button>
             <button onClick={() => navigate('/cancel-appointment')}>Cancel Appointment</button>
             <button onClick={handleLogout}>Logout</button>
@@ -82,13 +82,15 @@ const PatientDashboard = () => {
                     {appointments.map((appointment) => (
                         <tr key={appointment.id}>
                             <td>{appointment.id}</td>
-                            <td>{appointment.doctorName || appointment.doctorId}</td>
+                            <td>{appointment.doctorName}</td>
+                            {/* Wyświetlanie pełnej nazwy lekarza */}
                             <td>{new Date(appointment.dateTime).toLocaleString()}</td>
                             <td>{appointment.details}</td>
                             <td>{appointment.status}</td>
                         </tr>
                     ))}
                     </tbody>
+
                 </table>
             )}
         </div>
