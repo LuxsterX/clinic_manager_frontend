@@ -25,17 +25,23 @@ const styles = {
     container: {
         textAlign: 'center',
         padding: '50px',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Roboto, sans-serif',
+        backgroundColor: '#f4f7f6', // Light background to make the content stand out
+        height: '100vh', // Full screen height
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
     },
     heading: {
-        fontSize: '2.5rem',
+        fontSize: '3rem',
         marginBottom: '20px',
-        color: '#4CAF50',
+        color: '#2E7D32', // Darker green for a more professional look
+        fontWeight: '600', // Bold heading for emphasis
     },
     subheading: {
         fontSize: '1.2rem',
         marginBottom: '40px',
-        color: '#555',
+        color: '#616161', // Soft grey for the subheading
     },
     buttonContainer: {
         display: 'flex',
@@ -44,12 +50,16 @@ const styles = {
     },
     button: {
         padding: '15px 30px',
-        fontSize: '1rem',
-        backgroundColor: '#4CAF50',
+        fontSize: '1.1rem',
+        backgroundColor: '#388E3C', // Dark green button color
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '8px', // Rounded corners for a modern look
         cursor: 'pointer',
+        transition: 'background-color 0.3s ease', // Smooth hover effect
+    },
+    buttonHover: {
+        backgroundColor: '#2C6D2F', // Darker shade of green on hover
     },
 };
 
